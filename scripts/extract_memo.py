@@ -12,13 +12,13 @@ import os
 import re
 from pathlib import Path
 
-import google.generativeai as genai
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-2.0-flash")
+OLLAMA_URL = "http://host.docker.internal:11434/api/generate"
+OLLAMA_MODEL = "phi3:mini"
 
 # ── Prompts ────────────────────────────────────────────────────────────────────
 
@@ -129,9 +129,13 @@ def extract_memo(transcript: str, account_id: str, mode: str) -> dict:
     else:
         prompt = ONBOARDING_EXTRACTION_PROMPT.replace("{transcript}", transcript)
 
-    print(f"  [extract_memo] Calling Gemini (mode={mode})...")
-    response = model.generate_content(prompt)
-    raw = response.text.strip()
+    print(f"  [extract_memo] Calling Ollama (mode={mode})...")
+    response = requests.post(OLLAMA_URL, json={
+    "model": OLLAMA_MODEL,
+    "prompt": prompt,
+    "stream": False
+    })
+    raw = response.json()["response"].strip()
 
     # Strip any accidental markdown fences
     raw = re.sub(r"^```json\s*", "", raw)

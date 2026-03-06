@@ -1,0 +1,43 @@
+{
+  "account_id": "ACC001",
+  "company_name": null,
+  "business_hours": {
+    "days": "Monday to Friday",
+    "start": "09:00",
+    "end": "17:00",
+    "timezone": "Eastern Time (ET)"
+  },
+  "office_address": null,
+  "services_supported": [
+    "residential",
+    "commercial",
+    "service calls"
+  ],
+  "emergency_definition": [
+    "personal on call during business hours"
+  ],
+  "emergency_routing_rules": {
+    "primary_contact": "Ben Penoyer",
+    "primary_phone": "null",
+    "secondary_contact": null,
+    "secondary_phone": null,
+    "fallback": "null"
+  },
+  "non_emergency_routing_rules": null,
+  "call_transfer_rules": {
+    "timeout_seconds": 300,
+    "retries": 3,
+    "message_if_fails": "We are unable to connect, please try again later."
+  },
+  "integration_constraints": [
+    "Jobber CRM integration in progress",
+    "Existing integrations for ServiceTitan and HouseCall Pro"
+  ],
+  "after_hours_flow_summary": null,
+  "office_hours_flow_summary": null,
+  "questions_or_unknowns": [
+    "Ben Penoyer to provide company legal name, billing address, email, phone, and contact details",
+    "Ben Penoyer to provide feedback for AI testing"
+  ],
+  "notes": "Ben Penoyer has agreed to sign the contract via DocuSign on the same day of the meeting, and he is to schedule the kickoff call for the next day at noon."
+}
