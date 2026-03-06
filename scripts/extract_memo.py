@@ -18,7 +18,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-1.5-flash")
+model = genai.GenerativeModel("gemini-2.0-flash")
 
 # ── Prompts ────────────────────────────────────────────────────────────────────
 
@@ -125,14 +125,9 @@ def load_transcript(path: str) -> str:
 def extract_memo(transcript: str, account_id: str, mode: str) -> dict:
     """Call Gemini and return parsed memo dict."""
     if mode == "demo":
-        prompt = DEMO_EXTRACTION_PROMPT.format(
-            account_id=account_id,
-            transcript=transcript
-        )
+        prompt = DEMO_EXTRACTION_PROMPT.replace("{account_id}", account_id).replace("{transcript}", transcript)
     else:
-        prompt = ONBOARDING_EXTRACTION_PROMPT.format(
-            transcript=transcript
-        )
+        prompt = ONBOARDING_EXTRACTION_PROMPT.replace("{transcript}", transcript)
 
     print(f"  [extract_memo] Calling Gemini (mode={mode})...")
     response = model.generate_content(prompt)

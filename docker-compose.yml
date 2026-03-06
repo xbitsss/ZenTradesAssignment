@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   n8n:
     image: n8nio/n8n:latest
@@ -12,13 +10,21 @@ services:
       - N8N_PORT=5678
       - WEBHOOK_URL=http://localhost:5678
       - GEMINI_API_KEY=${GEMINI_API_KEY}
-      - NOTION_API_KEY=${NOTION_API_KEY}
-      - NOTION_DATABASE_ID=${NOTION_DATABASE_ID}
     volumes:
       - n8n_data:/home/node/.n8n
-      # Mount your project so n8n can execute the Python scripts
       - .:/app
     working_dir: /app
+
+  pipeline:
+    build: .
+    container_name: pipeline
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: tail -f /dev/null
 
 volumes:
   n8n_data:
