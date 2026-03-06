@@ -1,0 +1,3 @@
+# Force all text files to use LF (Linux) line endings 
+# This prevents Docker scripts from breaking
+* text eol=lf

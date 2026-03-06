@@ -1,0 +1,101 @@
+{
+  "name": "Clara Answers Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "pipeline-a",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-pipeline-a",
+      "name": "Webhook: Pipeline A",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 200],
+      "webhookId": "pipeline-a"
+    },
+    {
+      "parameters": {
+        "path": "pipeline-b",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-pipeline-b",
+      "name": "Webhook: Pipeline B",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [100, 400],
+      "webhookId": "pipeline-b"
+    },
+    {
+      "parameters": {
+        "command": "cd /app && python scripts/pipeline_a.py --transcript {{ $json.transcript_path }} --account_id {{ $json.account_id }}"
+      },
+      "id": "exec-pipeline-a",
+      "name": "Run Pipeline A",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [350, 200]
+    },
+    {
+      "parameters": {
+        "command": "cd /app && python scripts/pipeline_b.py --transcript {{ $json.transcript_path }} --account_id {{ $json.account_id }}"
+      },
+      "id": "exec-pipeline-b",
+      "name": "Run Pipeline B",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [350, 400]
+    },
+    {
+      "parameters": {
+        "command": "cd /app && python scripts/batch_run.py --demo_dir {{ $json.demo_dir }} --onboarding_dir {{ $json.onboarding_dir }}"
+      },
+      "id": "exec-batch",
+      "name": "Run Batch",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [350, 600]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'success', output: $json.stdout } }}"
+      },
+      "id": "respond-a",
+      "name": "Respond Pipeline A",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [600, 200]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: 'success', output: $json.stdout } }}"
+      },
+      "id": "respond-b",
+      "name": "Respond Pipeline B",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [600, 400]
+    }
+  ],
+  "connections": {
+    "Webhook: Pipeline A": {
+      "main": [[{"node": "Run Pipeline A", "type": "main", "index": 0}]]
+    },
+    "Webhook: Pipeline B": {
+      "main": [[{"node": "Run Pipeline B", "type": "main", "index": 0}]]
+    },
+    "Run Pipeline A": {
+      "main": [[{"node": "Respond Pipeline A", "type": "main", "index": 0}]]
+    },
+    "Run Pipeline B": {
+      "main": [[{"node": "Respond Pipeline B", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "notes": "Trigger Pipeline A via POST to /webhook/pipeline-a with {transcript_path, account_id}. Trigger Pipeline B via POST to /webhook/pipeline-b with {transcript_path, account_id}."
+}
